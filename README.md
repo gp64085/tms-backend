@@ -29,6 +29,7 @@ pnpm install
 echo "JWT_SECRET=e22290bdf3365293c131d77a3c52e369ef8c2954b98716f3b72d8c42346eba11" > .env
 echo "DATABASE_URL=./local.db" >> .env
 echo "PORT=4000" >> .env
+echo "FRONTEND_URL=http://localhost:5173" >> .env
 ```
 
 3. **Generate and setup database:**
