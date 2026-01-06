@@ -6,12 +6,17 @@
   "main": "./src/index.js",
   "scripts": {
     "dev": "nodemon ./src/index.js",
-    "start": "node ./src/index.js",
+    "start": "pnpm db:generate && pnpm db:push && node ./src/index.js",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate"
   },
-  "keywords": ["tms", "transport", "graphql", "nodejs"],
+  "keywords": [
+    "tms",
+    "transport",
+    "graphql",
+    "nodejs"
+  ],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.4.1",
