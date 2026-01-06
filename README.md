@@ -6,8 +6,8 @@ Transport Management System backend API built with Node.js, GraphQL, and SQLite.
 
 - 🔗 **GraphQL API**: Complete CRUD operations for shipments
 - 🔐 **Authentication**: JWT-based auth with role-based access
-- 🗄️ **Database**: SQLite with Drizzle ORM
-- ⚡ **Real-time**: GraphQL subscriptions support
+- 🗄️ **Database**: SQLite with Drizzle ORM (Turso for production)
+- 🌐 **CORS**: Configurable frontend URL support
 - ✅ **Validation**: Input validation and error handling
 
 ## 🛠️ Tech Stack
@@ -27,9 +27,16 @@ pnpm install
 2. **Set up environment variables:**
 ```bash
 echo "JWT_SECRET=e22290bdf3365293c131d77a3c52e369ef8c2954b98716f3b72d8c42346eba11" > .env
-echo "DATABASE_URL=./local.db" >> .env
+echo "DATABASE_URL=file:local.db" >> .env
 echo "PORT=4000" >> .env
 echo "FRONTEND_URL=http://localhost:5173" >> .env
+```
+
+**For production (Turso):**
+```bash
+echo "NODE_ENV=production" >> .env
+echo "DATABASE_URL=libsql://your-database.turso.io" >> .env
+echo "DATABASE_AUTH_TOKEN=your-auth-token" >> .env
 ```
 
 3. **Generate and setup database:**
@@ -177,3 +184,23 @@ query {
 - `IN_TRANSIT` - Shipment in transit
 - `DELIVERED` - Shipment delivered successfully
 - `CANCELLED` - Shipment cancelled
+
+## 📊 Environment Variables
+
+**Development:**
+```env
+JWT_SECRET=your-secret-key
+DATABASE_URL=file:local.db
+PORT=4000
+FRONTEND_URL=http://localhost:5173
+```
+
+**Production:**
+```env
+NODE_ENV=production
+JWT_SECRET=your-secret-key
+DATABASE_URL=libsql://your-database.turso.io
+DATABASE_AUTH_TOKEN=your-auth-token
+PORT=4000
+FRONTEND_URL=https://your-frontend-domain.com
+```
