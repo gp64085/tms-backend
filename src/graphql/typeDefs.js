@@ -67,8 +67,11 @@ type Query {
 }
 
 type Mutation {
-    # User authentication
+    # User login
     login(username: String!, password: String!): Auth!
+    # User registration
+    signUp(username: String!, password: String!): Auth!
+
     # Create a new shipment
     addShipment(
         trackingId: String!

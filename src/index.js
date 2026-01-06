@@ -18,7 +18,7 @@ const { url } = await startStandaloneServer(server, {
     return getUser(token);
   },
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   },
 });
