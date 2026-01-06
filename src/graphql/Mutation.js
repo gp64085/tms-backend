@@ -1,5 +1,5 @@
-import { eq } from "drizzle-orm";
-import { shipments } from "../db/schema.js";
+import { and, eq } from "drizzle-orm";
+import { shipments, users } from "../db/schema.js";
 import { db } from "../db/index.js";
 import jwt from "jsonwebtoken";
 
@@ -19,7 +19,8 @@ export const ShipmentMutation = {
 
       return shipment[0];
     } catch (error) {
-      if (error?.cause?.code === "SQLITE_CONSTRAINT_UNIQUE") {
+      console.error(error?.cause?.code);
+      if (error?.cause?.code === "CONSTRAINT_UNIQUE") {
         throw Error("Duplicate tracking ID");
       }
 
@@ -51,14 +52,11 @@ export const ShipmentMutation = {
 
 export const UserMutation = {
   login: async (_, { username, password }) => {
-    const users = [
-      { id: "1", username: "admin", password: "admin@123", role: "ADMIN" },
-      { id: "2", username: "john", password: "john@123", role: "EMPLOYEE" },
-    ];
-
-    const user = users.find(
-      (u) => u.username === username && u.password === password
-    );
+    const [user] = await db
+      .select({ id: users.id, username: users.username, role: users.role })
+      .from(users)
+      .where(and(eq(users.username, username), eq(users.password, password)))
+      .limit(1);
 
     if (!user) throw new Error("User not found");
 
@@ -70,5 +68,37 @@ export const UserMutation = {
     );
 
     return { token, user };
+  },
+  signUp: async (_, { username, password }) => {
+    try {
+      const existingUser = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.username, username))
+        .limit(1);
+
+      if (existingUser.length > 0) {
+        throw new Error("User already exists with same username");
+      }
+
+      const [newUser] = await db
+        .insert(users)
+        .values({ username, password })
+        .returning({
+          id: users.id,
+          username: users.username,
+          role: users.role,
+        });
+
+      const token = jwt.sign(
+        { userId: newUser.id, role: newUser.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      return { token, user: newUser };
+    } catch (error) {
+      throw new Error("User not found");
+    }
   },
 };

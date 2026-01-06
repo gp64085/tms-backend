@@ -6,8 +6,21 @@ export const shipments = sqliteTable("shipments", {
   customerName: text("customer_name").notNull(),
   origin: text("origin").notNull(),
   destination: text("destination").notNull(),
-  status: text("status").default("PENDING"), // 'PENDING', 'IN_TRANSIT', 'DELIVERED'
+  status: text("status").default("PENDING"), // 'PENDING', 'IN_TRANSIT', 'DELIVERED', 'CANCELLED'
   flagged: integer("flagged", { mode: "boolean" }).default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .$onUpdateFn(() => new Date()),
+});
+
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  role: text("role").notNull().default("EMPLOYEE"), // 'ADMIN', 'EMPLOYEE'
   createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
     () => new Date()
   ),
